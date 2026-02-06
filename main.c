@@ -18,8 +18,7 @@ int main(void)
     const int ball_radius = 5;
     int ball_colided = 0;
     const float ball_speed = 2.5f;
-    const float alien_speed = 2.5f;
-    int alien_direction = 1;
+    float alien_speed = 1.5f;
 
     Vector2 humanPosition = {(float)characters_radius + characters_spacing_side, (float)screenHeight/2};
     Vector2 alienPosition = {(float)screenWidth-characters_radius - characters_spacing_side, (float)screenHeight/2};
@@ -32,16 +31,13 @@ int main(void)
         if( CheckCollisionCircles(humanPosition,characters_radius, ballPosition,ball_radius) ||
             CheckCollisionCircles(alienPosition,characters_radius, ballPosition,ball_radius)) ball_colided = !ball_colided;
         
-        if(alienPosition.y - screenHeight == characters_radius) alien_direction = -1;
-        if(alienPosition.y - screenHeight == screenHeight-characters_radius) alien_direction = 1;
-
-        //alienPosition.y += alien_speed;
-        //if ((alienPosition.y >= (screenHeight - ball_radius)) || (alienPosition.y <= ball_radius)) alienPosition.y *= -alien_speed;
-
-        alienPosition.y = alienPosition.y + (alien_direction)*alien_speed;
-
         if(!ball_colided) ballPosition.x -= ball_speed;
         else ballPosition.x += ball_speed;
+        
+        // Automatically moves alien inside the y axis
+        if (((alienPosition.y + characters_radius) >= screenHeight) || (alienPosition.y <= characters_radius)) alien_speed *= -1;
+        
+        alienPosition.y += alien_speed;
 
         if (IsKeyDown(KEY_UP)) humanPosition.y -= 2.0f;
         if (IsKeyDown(KEY_DOWN)) humanPosition.y += 2.0f;
